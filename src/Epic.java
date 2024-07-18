@@ -1,4 +1,9 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Epic extends Task {
+
+    protected ArrayList<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String name, String description, String status) {
         super(name, description, status);
