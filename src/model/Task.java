@@ -1,22 +1,25 @@
+package model;
+
+
 import java.util.Objects;
 
 public class Task {
 
-    private static int idGenerator = 0;
     protected int id;
     protected String name;
     protected String description;
     protected String status;
 
     public Task(String name, String description, String status) {
-        this.id = idGenerator++;
         this.name = name;
         this.description = description;
-        this.status = status;
+        this.status = "NEW";
     }
 
-    public boolean isEpic() {
-        return false;
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.status = "NEW";
     }
 
     public int getId() {
@@ -35,16 +38,16 @@ public class Task {
         this.name = name;
     }
 
-    public String getStatus() {
-        return status;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "model.Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
