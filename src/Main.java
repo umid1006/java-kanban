@@ -57,9 +57,9 @@ public class Main {
     private static void printTasks(List<Task> tasks, TaskManager manager) {
         for (Task task : tasks) {
             System.out.println(task);
-            if (task instanceof Epic) {
+            if (task instanceof Epic epic) {
                 // Retrieve subtasks from Logic.TaskManager based on epicId
-                List<Subtask> subtasks = manager.getEpicSubtasks(((Epic) task).getId());
+                List<Subtask> subtasks = manager.getEpicSubtasks(epic.getId());
                 System.out.println("  Subtasks:");
                 for (Subtask subtask : subtasks) {
                     System.out.println("    " + subtask);
