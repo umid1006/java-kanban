@@ -1,4 +1,4 @@
-package Logic;
+package logic;
 
 import model.Epic;
 import model.Subtask;
@@ -120,7 +120,7 @@ public class TaskManager {
 
             Epic updatedEpic = getEpicBySubtaskId(oldSubtask.getEpicId());
             if (updatedEpic != null) {
-                String newStatus = updatedEpic.recalculateEpicStatus();
+                String newStatus = String.valueOf(updatedEpic.recalculateEpicStatus());
                 updatedEpic.setStatus(newStatus);
             } else {
                 System.out.println("Epic not found for subtask " + subtaskId);

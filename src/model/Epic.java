@@ -11,7 +11,7 @@ public class Epic extends Task {
         this.subtaskIds = new ArrayList<>(newSubtaskIds);
     }
 
-    public Epic(String name, String description, String status) {
+    public Epic(String name, String description, Status status) {
         super(name, description, status);
     }
 
@@ -19,19 +19,19 @@ public class Epic extends Task {
         return new ArrayList<>(subtaskIds);
     }
 
-    public String recalculateEpicStatus() {
+    public Status recalculateEpicStatus() {
         if (subtasks.isEmpty()) {
-            return "NEW";
+            return Status.NEW;
         }
 
         for (Map.Entry<Integer, Subtask> entry : subtasks.entrySet()) {
             Subtask subtask = entry.getValue();
-            if (!Objects.equals(subtask.getStatus(), "DONE")) {
-                return "IN_PROGRESS";
+            if (!Objects.equals(subtask.getStatus(), Status.DONE)) {
+                return Status.IN_PROGRESS;
             }
         }
 
-        return "DONE";
+        return Status.DONE;
     }
 
 

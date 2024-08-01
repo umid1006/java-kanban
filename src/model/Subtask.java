@@ -5,7 +5,7 @@ public class Subtask extends Task {
     private final int epicId;
 
 
-    public Subtask(String name, String description, String status, int epicId) { // Corrected argument name (optional)
+    public Subtask(String name, String description, Status status, int epicId) { // Corrected argument name (optional)
         super(name, description, status); // Assuming ID is set in Task constructor
         this.epicId = epicId;
     }
@@ -14,7 +14,7 @@ public class Subtask extends Task {
         return epicId;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
