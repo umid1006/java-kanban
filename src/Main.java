@@ -1,4 +1,6 @@
-import logic.TaskManager;
+import Manager.InMemoryTaskManager;
+import Manager.Managers;
+import Manager.TaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -10,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager manager = new TaskManager();
+        TaskManager manager = Managers.getDefault();
 
         // Create tasks (provide name, description, and status as arguments)
         Task task1 = new Task("model.Task #1", "Task1 description", Status.NEW);
@@ -42,6 +44,11 @@ public class Main {
         // Print all tasks
         printTasks(manager.getAllTasks(), manager);
 
+        List<TaskManager> history = Managers.getHistoryDefault();
+        for (TaskManager item : history) {
+        System.out.println(item);
+        }
+
         // Update task status
         Task retrievedTask = manager.getSubTaskById(task2.getId());
         if (retrievedTask != null) {
@@ -55,7 +62,7 @@ public class Main {
         printTasks(manager.getAllTasks(), manager);
     }
 
-    private static void printTasks(List<Task> tasks, TaskManager manager) {
+    private static void printTasks(List<Task> tasks, InMemoryTaskManager manager) {
         for (Task task : tasks) {
             System.out.println(task);
             if (task instanceof Epic epic) {
