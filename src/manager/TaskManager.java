@@ -1,4 +1,4 @@
-package Manager;
+package manager;
 
 import model.Epic;
 import model.Subtask;
@@ -46,4 +46,7 @@ public interface TaskManager {
     void deleteEpicById(int epicId);
 
     ArrayList<Subtask> getEpicSubtasks(int epicId);
+
+    List<TaskManager> getHistory();
+
 }

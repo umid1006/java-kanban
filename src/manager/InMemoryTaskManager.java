@@ -1,4 +1,4 @@
-package Manager;
+package manager;
 
 import model.Epic;
 import model.Status;
@@ -16,7 +16,15 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getHistoryDefault();
+    private final HistoryManager historyManager;
+
+    public InMemoryTaskManager() {
+        this.historyManager = Managers.getHistoryDefault();
+    }
+
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
     private int id = 1;
 
@@ -43,7 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         Task task = tasks.get(id);
-        historyManager.addTask((TaskManager) task);
+        historyManager.addTask((TaskManager) tasks);
 
         return task;
     }
@@ -51,6 +59,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubTaskById(int id) {
         Task task = tasks.get(id);
+        historyManager.addTask((TaskManager) subtasks);
         if (task instanceof Subtask) {
             return subtasks.get(id);
         }
@@ -59,6 +68,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
+        historyManager.addTask((TaskManager) epics);
         return epics.get(id);
     }
 

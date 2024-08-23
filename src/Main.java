@@ -1,10 +1,12 @@
-import Manager.InMemoryTaskManager;
-import Manager.Managers;
-import Manager.TaskManager;
+import manager.InMemoryTaskManager;
+import manager.Managers;
+import manager.TaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
+import manager.InMemoryHistoryManager;
+import manager.HistoryManager;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
 
         TaskManager manager = Managers.getDefault();
+
 
         // Create tasks (provide name, description, and status as arguments)
         Task task1 = new Task("model.Task #1", "Task1 description", Status.NEW);
@@ -42,9 +45,9 @@ public class Main {
         manager.addNewSubtask(subtask3);
 
         // Print all tasks
-        printTasks(manager.getAllTasks(), manager);
+        printTasks(manager.getAllTasks(), (InMemoryTaskManager) manager);
 
-        List<TaskManager> history = Managers.getHistoryDefault();
+        List<TaskManager> history = manager.getHistory();
         for (TaskManager item : history) {
         System.out.println(item);
         }
@@ -59,7 +62,7 @@ public class Main {
         }
 
         System.out.println("\nTasks after status update:");
-        printTasks(manager.getAllTasks(), manager);
+        printTasks(manager.getAllTasks(), (InMemoryTaskManager) manager);
     }
 
     private static void printTasks(List<Task> tasks, InMemoryTaskManager manager) {
