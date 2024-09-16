@@ -5,8 +5,6 @@ import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
-import manager.InMemoryHistoryManager;
-import manager.HistoryManager;
 
 import java.util.List;
 
@@ -53,7 +51,7 @@ public class Main {
         }
 
         // Update task status
-        Task retrievedTask = manager.getSubTaskById(task2.getId());
+        Task retrievedTask = manager.getTaskById(task2.getId());
         if (retrievedTask != null) {
             retrievedTask.setStatus(Status.DONE);
             manager.updateTask(retrievedTask);

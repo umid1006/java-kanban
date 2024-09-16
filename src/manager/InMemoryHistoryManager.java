@@ -1,27 +1,79 @@
 package manager;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static final int HISTORY_SIZE = 10;
+    public static class Node {
+        TaskManager task;
+        Node prev;
+        Node next;
 
-    private final LinkedList<TaskManager> history = new LinkedList<>();
+        public Node(TaskManager task) {
+            this.task = task;
+        }
+    }
 
-    @Override
-    public List<TaskManager> getHistory() {
-        return new LinkedList<>(history);
+    private Node head;
+    private Node tail;
+    public final HashMap<Integer, Node> nodesById = new HashMap<>();
+
+    public void addTask(TaskManager task) {
+        int id = task.generateNewId();
+        // Если задача уже есть, удаляем старый узел
+        Node existingNode = nodesById.get(id);
+        if (existingNode != null) {
+            removeNode(existingNode);
+        }
+
+        // Создаем новый узел и добавляем его в конец списка
+        Node newNode = new Node(task);
+        if (tail != null) {
+            tail.next = newNode;
+            newNode.prev = tail;
+        } else {
+            head = newNode;
+        }
+        tail = newNode;
+        nodesById.put(id, newNode);
     }
 
     @Override
-    public void addTask(TaskManager task) {
-        if (task == null) {
+    public void remove(int id) {
+
+    }
+
+    void removeNode(Node node) {
+        if (node == null) {
             return;
-}
-        history.add(task);
-        if (history.size() > HISTORY_SIZE) {
-            history.removeFirst();
         }
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        }
+        if (node.next != null) {
+            node.next.prev = node.prev;
+
+        }
+        if (node == head) {
+            head = node.next;
+        }
+        if (node == tail) {
+            tail = node.prev;
+        }
+        nodesById.remove(node.task.generateNewId());
+
+    }
+
+    public List<TaskManager> getHistory() {
+        List<TaskManager> history = new ArrayList<>();
+        Node current = head;
+        while (current != null) {
+            history.add(current.task);
+            current = current.next;
+        }
+        return history;
     }
 }
