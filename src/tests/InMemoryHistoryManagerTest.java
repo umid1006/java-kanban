@@ -1,4 +1,7 @@
-package manager;
+package tests;
+import manager.InMemoryHistoryManager;
+import manager.MockTaskManager;
+import manager.TaskManager;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
