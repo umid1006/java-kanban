@@ -1,15 +1,5 @@
 package manager;
-
-import manager.InMemoryHistoryManager;
-import manager.TaskManager;
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,12 +54,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(task3, history.get(1));
         assertNull(manager.nodesById.get(2)); // Ensure task2 is removed from the map
     }
-
-    @BeforeEach
-    void setUp() {
-        TaskManager taskManager = new InMemoryTaskManager();
-    }
-
-
-
-}
+   }
