@@ -1,4 +1,3 @@
-package test;
 import manager.InMemoryHistoryManager;
 import manager.MockTaskManager;
 import manager.TaskManager;
@@ -57,4 +56,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(task3, history.get(1));
         assertNull(manager.nodesById.get(2)); // Ensure task2 is removed from the map
     }
-   }
+}
