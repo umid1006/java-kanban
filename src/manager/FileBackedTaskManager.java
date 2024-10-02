@@ -134,10 +134,3 @@ public static FileBackedTaskManager loadFromFile(Path file) {
 
 }
 
-
-// Класс исключения ManagerSaveException
-class ManagerSaveException extends RuntimeException {
-    public ManagerSaveException(String message) {
-        super(message);
-    }
-}
