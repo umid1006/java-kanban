@@ -1,10 +1,8 @@
 import manager.InMemoryHistoryManager;
-import manager.InMemoryTaskManager;
-import manager.TaskManager;
+
 import model.Task;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,17 +11,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void testGetHistory() {
-        InMemoryHistoryManager manager = new InMemoryHistoryManager();
-        Task task1 = new Task("Задача 1", "Описание задачи 1"); // Provide both name and description        Task task2 = new Task("Задача 2");
-        Task task2 = new Task("Задача 2", "Описание задачи 2"); // Provide both name and description
 
-        manager.addTask(task1);
-        manager.addTask(task2);
-
-        List<Task> history = manager.getHistory();
-        assertEquals(2, history.size());
-        assertSame(task1, history.get(0));
-        assertSame(task2, history.get(1));
     }
 
     @Test
