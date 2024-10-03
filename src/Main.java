@@ -45,8 +45,8 @@ public class Main {
         // Print all tasks
         printTasks(manager.getAllTasks(), (InMemoryTaskManager) manager);
 
-        List<TaskManager> history = manager.getHistory();
-        for (TaskManager item : history) {
+        List<Task> history = manager.getHistory();
+        for (Task item : history) {
         System.out.println(item);
         }
 
