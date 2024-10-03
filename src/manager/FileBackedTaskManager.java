@@ -3,6 +3,7 @@ package manager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import model.Status;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,9 +14,18 @@ import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
+    public FileBackedTaskManager(Path file) {
+        this.file = file;
+    }
+
+    private final Path file; // Поле для хранения файла
+
     // Переопределяем модифицирующие операции
     @Override
     public int addNewTask(Task task) {
+        if (task == null) {
+            return 0;
+        }
         int id = super.addNewTask(task);
         save();
         return id;
@@ -83,28 +93,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-
-private final Path file; // Поле для хранения файла
-
-public FileBackedTaskManager(Path file) {
-    this.file = file;
-}
-
 // Метод для сохранения текущего состояния менеджера в файл
-private void save() {
+public void save() {
     try (FileWriter writer = new FileWriter(file.toFile(), StandardCharsets.UTF_8)) {
-        // Записываем заголовок
         writer.write("id,type,name,status,description,epic\n");
 
-        // Записываем задачи
         for (Task task : getAllTasks()) {
-            writer.write(task.toString() + "\n");
+            writer.write(String.format("%d,Task,%s,%s,%s,\n",
+                    task.getId(), task.getName(), task.getStatus().name(), task.getDescription()));
         }
         for (Epic epic : getAllEpics()) {
-            writer.write(epic.toString() + "\n");
+            writer.write(String.format("%d,Epic,%s,%s,%s,\n", // Corrected line for Epic
+                    epic.getId(), epic.getName(), epic.getStatus().name(), epic.getDescription()));
         }
         for (Subtask subtask : getAllSubtasks()) {
-            writer.write(subtask.toString() + "\n");
+            writer.write(String.format("%d,Subtask,%s,%s,%s,%d\n", // Corrected line for Subtask
+                    subtask.getId(), subtask.getName(), subtask.getStatus().name(), subtask.getDescription(), subtask.getEpicId()));
         }
 
     } catch (IOException e) {
@@ -117,20 +121,41 @@ public static FileBackedTaskManager loadFromFile(Path file) {
     FileBackedTaskManager manager = new FileBackedTaskManager(file);
     try {
         List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-        if (lines.size() > 1) { // Проверяем, есть ли данные в файле
-            for (int i = 1; i < lines.size(); i++) { // Начинаем с 1, чтобы пропустить заголовок
+        if (lines.size() > 1) {
+            for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
                 String[] parts = line.split(",");
-                // ... (логика для парсинга данных из строки и добавления задач в менеджер)
+
+                // Parse data from the string
+                int id = Integer.parseInt(parts[0]);
+                String type = parts[1]; // Get the task type
+                String name = parts[2];
+                Status status = Status.valueOf(parts[3]); // Parse the status correctly
+                String description = parts[4];
+
+                // Determine the task type and create the corresponding object
+                switch (type) {
+                    case "Task":
+                        Task task = new Task(name, description, status, id);
+                        manager.addNewTask(task);
+                        break;
+                    case "Subtask":
+                        int epicId = Integer.parseInt(parts[5]);
+                        Subtask subtask = new Subtask(name, description, status, epicId);
+                        manager.addNewSubtask(subtask);
+                        break;
+                    case "Epic":
+                        Epic epic = new Epic(name, description, status);
+                        manager.addNewEpic(epic);
+                        break;
+                    default:
+                        System.err.println("Invalid line format: " + line);
+                }
             }
         }
     } catch (IOException e) {
-        System.err.println("Ошибка загрузки из файла: " + e.getMessage());
+        System.err.println("Error loading from file: " + e.getMessage());
     }
     return manager;
 }
-
-
-
 }
-
