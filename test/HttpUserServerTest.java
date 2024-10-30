@@ -64,16 +64,17 @@ class HttpUserServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals (200, response.statusCode());
+        assertEquals(200, response.statusCode());
 
-        Type userType = new TypeToken<ArrayList<User>>() {}.getType();
+        Type userType = new TypeToken<ArrayList<User>>() {
+        }.getType();
         List<User> actual = gson.fromJson(response.body(), userType);
 
         assertNotNull(actual, "Пользователи не возвращаются");
         assertEquals(1, actual.size(), "Не верное количество пользователей");
         assertEquals(user, actual.getFirst(), "Пользователи не совподают");
 
-        }
+    }
 
     @Test
     void getUserById() throws IOException, InterruptedException {
@@ -82,9 +83,10 @@ class HttpUserServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals (200, response.statusCode());
+        assertEquals(200, response.statusCode());
 
-        Type userType = new TypeToken<User>() {}.getType();
+        Type userType = new TypeToken<User>() {
+        }.getType();
         User actual = gson.fromJson(response.body(), userType);
 
         assertNotNull(actual, "Пользователи не возвращаются");
@@ -98,9 +100,10 @@ class HttpUserServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals (200, response.statusCode());
+        assertEquals(200, response.statusCode());
 
-        Type taskType = new TypeToken<ArrayList<Task>>() {}.getType();
+        Type taskType = new TypeToken<ArrayList<Task>>() {
+        }.getType();
         List<Task> actual = gson.fromJson(response.body(), taskType);
 
         assertNotNull(actual, "Задачи не возвращаются");
@@ -115,7 +118,7 @@ class HttpUserServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals (200, response.statusCode());
+        assertEquals(200, response.statusCode());
     }
 
-    }
+}

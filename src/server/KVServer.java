@@ -39,15 +39,13 @@ public class KVServer {
 
             if ("GET".equals(h.getRequestMethod())) {
                 String key = h.getRequestURI().getPath().substring("/load/".length());
-
                 if (key.isEmpty()) {
                     System.out.println("Key для чтения пустой. key указывается в пути: /load/{key}");
                     h.sendResponseHeaders(400, 0);
                     return;
                 }
-
-                if(!data.containsKey(key)) {
-                    h.sendResponseHeaders(404,0);
+                if (!data.containsKey(key)) {
+                    h.sendResponseHeaders(404, 0);
                     System.out.println("Not found");
                 } else {
                     sendText(h, data.get(key));
