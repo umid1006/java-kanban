@@ -100,106 +100,106 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-// Метод для сохранения текущего состояния менеджера в файл
-public void save() {
-    try (FileWriter writer = new FileWriter(file.toFile(), StandardCharsets.UTF_8)) {
-        writer.write("id,type,name,status,description,epic\n");
+    // Метод для сохранения текущего состояния менеджера в файл
+    public void save() {
+        try (FileWriter writer = new FileWriter(file.toFile(), StandardCharsets.UTF_8)) {
+            writer.write("id,type,name,status,description,epic\n");
 
-        for (Task task : getAllTasks()) {
-            writer.write(String.format("%d,%s,%s,%s,%s,%s,%d,%d\n", // Added duration and startTime
-                    task.getId(),
-                    "Task", // Type of the task
-                    task.getName(),
-                    task.getStatus().name(),
-                    task.getDescription(),
-                    "", // No epicId for tasks
-                    task.getDuration(), // Duration in minutes
-                    task.getStartTime() != null ? task.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
-            ));
-        }
-        for (Epic epic : getAllEpics()) {
-            writer.write(String.format("%d,%s,%s,%s,%s,%s,%d,%d\n",
-                    epic.getId(), // Added epic ID
-                    "Epic", // Type of the task
-                    epic.getName(),
-                    epic.getStatus().name(),
-                    epic.getDescription(),
-                    "", // No epicId for epics
-                    epic.getDuration(), // Duration in minutes
-                    epic.getStartTime() != null ? epic.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
-            ));
-        }
-        for (Subtask subtask : getAllSubtasks()) {
-            writer.write(String.format("%d,%s,%s,%s,%s,%d,%d,%d\n",
-                    subtask.getId(), // Added subtask ID
-                    "Subtask", // Type of the task
-                    subtask.getName(),
-                    subtask.getStatus().name(),
-                    subtask.getDescription(),
-                    subtask.getEpicId(), // Added epicId for subtasks
-                    subtask.getDuration(), // Duration in minutes
-                    subtask.getStartTime() != null ? subtask.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
-            ));
-        }
+            for (Task task : getAllTasks()) {
+                writer.write(String.format("%d,%s,%s,%s,%s,%s,%d,%d\n", // Added duration and startTime
+                        task.getId(),
+                        "Task", // Type of the task
+                        task.getName(),
+                        task.getStatus().name(),
+                        task.getDescription(),
+                        "", // No epicId for tasks
+                        task.getDuration(), // Duration in minutes
+                        task.getStartTime() != null ? task.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
+                ));
+            }
+            for (Epic epic : getAllEpics()) {
+                writer.write(String.format("%d,%s,%s,%s,%s,%s,%d,%d\n",
+                        epic.getId(), // Added epic ID
+                        "Epic", // Type of the task
+                        epic.getName(),
+                        epic.getStatus().name(),
+                        epic.getDescription(),
+                        "", // No epicId for epics
+                        epic.getDuration(), // Duration in minutes
+                        epic.getStartTime() != null ? epic.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
+                ));
+            }
+            for (Subtask subtask : getAllSubtasks()) {
+                writer.write(String.format("%d,%s,%s,%s,%s,%d,%d,%d\n",
+                        subtask.getId(), // Added subtask ID
+                        "Subtask", // Type of the task
+                        subtask.getName(),
+                        subtask.getStatus().name(),
+                        subtask.getDescription(),
+                        subtask.getEpicId(), // Added epicId for subtasks
+                        subtask.getDuration(), // Duration in minutes
+                        subtask.getStartTime() != null ? subtask.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
+                ));
+            }
 
-    } catch (IOException e) {
-        System.err.println("Ошибка сохранения в файл: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Ошибка сохранения в файл: " + e.getMessage());
+        }
     }
-}
 
-// Статический метод для загрузки данных из файла
-public static FileBackedTaskManager loadFromFile(Path file) {
-    FileBackedTaskManager manager = new FileBackedTaskManager(file);
-    try {
-        List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-        if (lines.size() > 1) {
-            for (int i = 1; i < lines.size(); i++) {
-                String line = lines.get(i);
-                String[] parts = line.split(",");
+    // Статический метод для загрузки данных из файла
+    public static FileBackedTaskManager loadFromFile(Path file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        try {
+            List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+            if (lines.size() > 1) {
+                for (int i = 1; i < lines.size(); i++) {
+                    String line = lines.get(i);
+                    String[] parts = line.split(",");
 
-                // Parse data from the string
-                int id = Integer.parseInt(parts[0]);
-                String type = parts[1]; // Get the task type
-                String name = parts[2];
-                Status status = Status.valueOf(parts[3]); // Parse the status correctly
-                String description = parts[4];
+                    // Parse data from the string
+                    int id = Integer.parseInt(parts[0]);
+                    String type = parts[1]; // Get the task type
+                    String name = parts[2];
+                    Status status = Status.valueOf(parts[3]); // Parse the status correctly
+                    String description = parts[4];
 
-                // Determine the task type and create the corresponding object
-                switch (type) {
-                    case "Task":
-                        Task task = new Task(name, description, status );
-                        task.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
-                        if (!parts[7].equals("0")) {
-                            task.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
-                        }
-                        manager.addNewTask(task);
-                        break;
-                    case "Subtask":
-                        Subtask subtask = new Subtask(name, description, status, id); // Assuming you have a Subtask constructor that takes these arguments
-                        subtask.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
-                        if (!parts[7].equals("0")) {
-                            subtask.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
-                        }
-                        manager.addNewSubtask(subtask);
-                        break;
-                    case "Epic":
-                        Epic epic = new Epic(name, description, status);
-                        epic.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
-                        if (!parts[7].equals("0")) {
-                            epic.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
-                        }
-                        manager.addNewEpic(epic);
-                        break;
-                    default:
-                        System.err.println("Invalid line format: " + line);
+                    // Determine the task type and create the corresponding object
+                    switch (type) {
+                        case "Task":
+                            Task task = new Task(name, description, status);
+                            task.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
+                            if (!parts[7].equals("0")) {
+                                task.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
+                            }
+                            manager.addNewTask(task);
+                            break;
+                        case "Subtask":
+                            Subtask subtask = new Subtask(name, description, status, id); // Assuming you have a Subtask constructor that takes these arguments
+                            subtask.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
+                            if (!parts[7].equals("0")) {
+                                subtask.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
+                            }
+                            manager.addNewSubtask(subtask);
+                            break;
+                        case "Epic":
+                            Epic epic = new Epic(name, description, status);
+                            epic.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
+                            if (!parts[7].equals("0")) {
+                                epic.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
+                            }
+                            manager.addNewEpic(epic);
+                            break;
+                        default:
+                            System.err.println("Invalid line format: " + line);
+                    }
                 }
             }
+        } catch (IOException e) {
+            System.err.println("Error loading from file: " + e.getMessage());
         }
-    } catch (IOException e) {
-        System.err.println("Error loading from file: " + e.getMessage());
+        return manager;
     }
-    return manager;
-}
 
     public List<Task> getPrioritizedTasks() {
         // Create a TreeSet with a comparator that sorts tasks by startTime

@@ -93,9 +93,9 @@ public class Epic extends Task {
             if (!Objects.equals(subtaskIds.get(i), other.subtaskIds.get(i))) {
                 return false;
             }
-    }
+        }
         return true;
-}
+    }
 
     @Override
     public long getDuration() {

@@ -20,7 +20,7 @@ public class User {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -41,7 +41,7 @@ public class User {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(id, name);
     }
 

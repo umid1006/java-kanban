@@ -58,8 +58,7 @@ public class Task {
         this.duration = duration.toMinutes();
     }
 
-    public
-    LocalDateTime getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
@@ -67,8 +66,7 @@ public class Task {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime()
-    {
+    public LocalDateTime getEndTime() {
         return null;
     }
 
@@ -110,12 +108,12 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return id == task.id &&
-                        Objects.equals(name, task.name) &&
-                        Objects.equals(description, task.description) &&
-                        status == task.status  &&
-                        Objects.equals(duration, task.duration) &&
-                        Objects.equals(startTime, task.startTime) &&
-                        Objects.equals(user, task.user);
+                Objects.equals(name, task.name) &&
+                Objects.equals(description, task.description) &&
+                status == task.status &&
+                Objects.equals(duration, task.duration) &&
+                Objects.equals(startTime, task.startTime) &&
+                Objects.equals(user, task.user);
     }
 
     @Override

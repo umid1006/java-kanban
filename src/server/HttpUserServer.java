@@ -101,7 +101,7 @@ public class HttpUserServer {
             exception.printStackTrace();
         } finally {
             httpExchange.close();
-    }
+        }
     }
 
     private int parsePathId(String pathId) {

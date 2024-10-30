@@ -47,7 +47,7 @@ public class Main {
 
         List<Task> history = manager.getHistory();
         for (Task item : history) {
-        System.out.println(item);
+            System.out.println(item);
         }
 
         // Update task status
