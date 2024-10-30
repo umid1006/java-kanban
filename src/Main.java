@@ -15,7 +15,6 @@ public class Main {
 
         TaskManager manager = Managers.getDefault();
 
-
         // Create tasks (provide name, description, and status as arguments)
         Task task1 = new Task("model.Task #1", "Task1 description", Status.NEW);
         Task task2 = new Task("model.Task #2", "Task2 description", Status.NEW);

@@ -31,7 +31,7 @@ public class HttpUserServer {
         server.createContext("/api/v1/users", this::handleUsers);
     }
 
-    private void handleUsers (HttpExchange httpExchange) {
+    private void handleUsers(HttpExchange httpExchange) {
 
         try {
             String path = httpExchange.getRequestURI().getPath();
@@ -123,16 +123,14 @@ public class HttpUserServer {
         System.out.println("Остановили сервер на порту " + PORT);
     }
 
-    private String readText(HttpExchange h) throws IOException{
+    private String readText(HttpExchange h) throws IOException {
         return new String(h.getRequestBody().readAllBytes(), UTF_8);
     }
 
-    private void sendText(HttpExchange h, String text) throws IOException{
+    private void sendText(HttpExchange h, String text) throws IOException {
         byte[] resp = text.getBytes(UTF_8);
         h.getResponseHeaders().add("Context-Type", "application/json;charset=utf-8");
         h.sendResponseHeaders(200, resp.length);
         h.getResponseBody().write(resp);
     }
-
 }
-
