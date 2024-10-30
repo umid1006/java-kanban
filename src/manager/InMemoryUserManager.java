@@ -32,7 +32,7 @@ public class InMemoryUserManager implements UserManager {
     @Override
     public void update(User user) {
         int id = user.getId();
-        if (!users.containsKey(id)){
+        if (!users.containsKey(id)) {
             return;
         }
         users.put(id, user);
