@@ -46,7 +46,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     void addNewTask() {
-        Task task = new Task("New Task", "Description");
+        Task task = new Task("New Task", "Description", Status.NEW);
         int taskId = manager.addNewTask(task);
         assertTrue(taskId > 0);
         assertEquals(task, manager.getTaskById(taskId));
@@ -68,4 +68,29 @@ class FileBackedTaskManagerTest {
         manager.deleteTaskById(taskId);
         assertNull(manager.getTaskById(taskId));
     }
+
+    @Test
+    void save_and_load_multipleTasks() {
+        Task task = new Task("Task 1", "Description 1", Status.NEW);
+        Epic epic = new Epic("Epic 1", "Epic Description 1", Status.NEW);
+        Subtask subtask = new Subtask("Subtask 1", "Subtask Description 1", Status.NEW, 1); // Assuming Epic with ID 1 exists
+
+        manager.addNewTask(task);
+        manager.addNewEpic(epic);
+        manager.addNewSubtask(subtask);
+        manager.save();
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+
+        // Assert that the loaded tasks are equal to the original tasks
+        assertEquals(task, loadedManager.getTaskById(task.getId()));
+        assertEquals(epic, loadedManager.getEpicById(epic.getId()));
+        assertEquals(subtask, loadedManager.getSubTaskById(subtask.getId()));
+
+        // Assert that the number of tasks is correct
+        assertEquals(1, loadedManager.getAllTasks().size());
+        assertEquals(1, loadedManager.getAllEpics().size());
+        assertEquals(1, loadedManager.getAllSubtasks().size());
+    }
+
 }

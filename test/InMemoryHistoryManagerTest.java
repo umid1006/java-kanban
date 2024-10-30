@@ -1,5 +1,6 @@
 import manager.InMemoryHistoryManager;
 
+import model.Status;
 import model.Task;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class InMemoryHistoryManagerTest {
     @Test
     void testAddTask_NewTask() {
         InMemoryHistoryManager manager = new InMemoryHistoryManager();
-        Task task = new Task("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1", Status.NEW);
 
         // Добавляем задачу
         manager.addTask(task);
@@ -35,8 +36,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void testRemove() {
         InMemoryHistoryManager manager = new InMemoryHistoryManager();
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
+        Task task2 = new Task("Задача 2", "Описание задачи 2", Status.NEW);
 
         manager.addTask(task1);
         manager.addTask(task2);

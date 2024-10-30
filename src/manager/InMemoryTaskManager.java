@@ -5,10 +5,12 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -55,18 +57,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubTaskById(int id) {
-        Task task = tasks.get(id);
-        historyManager.addTask((Task) subtasks);
-        if (task instanceof Subtask) {
-            return subtasks.get(id);
+        Subtask subtask = subtasks.get(id); // Correctly retrieve the Subtask object
+        if (subtask != null) {
+            historyManager.addTask(subtask); // Add the Subtask to history
         }
-        return null;  // Handle case where no task or non-model.Subtask is found
+        return subtask; // Handle case where no task or non-model.Subtask is found
     }
 
     @Override
     public Epic getEpicById(int id) {
-        historyManager.addTask((Task) epics);
-        return epics.get(id);
+        Epic epic = epics.get(id); // Correctly retrieve the Epic object from the HashMap
+        if (epic != null) {
+            historyManager.addTask(epic); // Add the Epic to the history
+        }
+        return epic;
     }
 
     @Override
@@ -83,30 +87,27 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.clear(); // Assuming tasks are stored in a map
     }
 
-    @Override
     public void deleteAllSubtasks() {
         subtasks.clear(); // Remove subtasks from the map
         // Update epic subtask fields based on deleted subtasks
-        for (Epic epic : epics.values()) {
-            epic.getSubtaskIds().clear(); // Clear existing subtasks in the epic
-        }
+        epics.values().forEach(epic -> epic.getSubtaskIds().clear());
     }
 
     @Override
     public void deleteAllEpics() {
-        epics.clear(); // Remove epics from the map
-        // Iterate over all epics and remove associated subtasks
-        for (Epic epic : epics.values()) {
-            for (Subtask subtask : subtasks.values()) {
-                if (subtask.getEpicId() == epic.getId()) {
-                    subtasks.remove(subtask.getId());
-                }
-            }
-        }
+        epics.values().stream()
+                .flatMap(epic -> subtasks.values().stream()
+                        .filter(subtask -> subtask.getEpicId() == epic.getId()))
+                .forEach(subtask -> subtasks.remove(subtask.getId()));
+        epics.clear(); // Remove epics from the map after removing subtasks
     }
 
     @Override
     public int addNewTask(Task task) {
+        if (task.getStartTime() != null && isTaskIntersectsWithOthers(task)) {
+            System.out.println("Задача пересекается с другими задачами!");
+            return -1; // Or throw an exception if preferred
+        }
         int id = generateNewId();
         task.setId(id);
         tasks.put(id, task);
@@ -123,6 +124,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Integer addNewSubtask(Subtask subtask) {
+        if (subtask.getStartTime() != null && isTaskIntersectsWithOthers(subtask)) {
+            System.out.println("Подзадача пересекается с другими задачами!");
+            return -1; // Or throw an exception if preferred
+        }
         int id = generateNewId();
         subtask.setId(id);
         subtasks.put(id, subtask);
@@ -131,6 +136,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task updatedTask) {
+        if (updatedTask.getStartTime() != null && isTaskIntersectsWithOthers(updatedTask)) {
+            System.out.println("Задача пересекается с другими задачами!");
+            return; // Or throw an exception if preferred
+        }
         int taskId = updatedTask.getId(); // Get ID from updated object
         if (tasks.containsKey(taskId)) {
             tasks.put(taskId, updatedTask); // Replace existing task with updated one
@@ -141,6 +150,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask updatedSubtask) {
+        if (updatedSubtask.getStartTime() != null && isTaskIntersectsWithOthers(updatedSubtask)) {
+            System.out.println("Подзадача пересекается с другими задачами!");
+            return; // Or throw an exception if preferred
+        }
         int subtaskId = updatedSubtask.getId();
 
         if (subtasks.containsKey(subtaskId)) {
@@ -188,16 +201,25 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Subtask> getEpicSubtasks(int epicId) {
-        ArrayList<Subtask> matchingSubtasks = new ArrayList<>();
-        for (Subtask subtask : subtasks.values()) { // Iterate over values in subtasks Map
-            if (subtask.getEpicId() == epicId) {
-                matchingSubtasks.add(subtask);
-            }
-        }
-        return matchingSubtasks;
+        return (ArrayList<Subtask>) subtasks.values().stream()
+                .filter(subtask -> subtask.getEpicId() == epicId)
+                .collect(Collectors.toList());
     }
 
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    private boolean isTaskIntersectsWithOthers(Task task) {
+        return getAllTasks().stream()
+                .filter(otherTask -> otherTask.getId() != task.getId() && otherTask.getStartTime() != null)
+                .anyMatch(otherTask -> isIntervalOverlapping(
+                        task.getStartTime(), task.getEndTime(),
+                        otherTask.getStartTime(), otherTask.getEndTime()));
+    }
+
+    private boolean isIntervalOverlapping(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
+        return start1.isBefore(end2) && start2.isBefore(end1);
+
     }
 }

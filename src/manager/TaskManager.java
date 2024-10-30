@@ -1,5 +1,6 @@
 package manager;
 
+import exception.NotFoundException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -16,11 +17,11 @@ public interface TaskManager {
 
     List<Epic> getAllEpics();
 
-    model.Task getTaskById(int id);
+    Task getTaskById(int id) throws NotFoundException;
 
-    Subtask getSubTaskById(int id);
+    Subtask getSubTaskById(int id) throws NotFoundException; // Добавляем throws NotFoundException
 
-    Epic getEpicById(int id);
+    Epic getEpicById(int id) throws NotFoundException; // Добавляем throws NotFoundException
 
     Epic getEpicBySubtaskId(int id);
 

@@ -1,3 +1,4 @@
+import exception.NotFoundException;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NotFoundException {
 
         TaskManager manager = Managers.getDefault();
 
