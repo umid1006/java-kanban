@@ -1,11 +1,16 @@
 package model;
 
 import java.util.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Epic extends Task {
 
     private ArrayList<Integer> subtaskIds = new ArrayList<>();
     public Map<Integer, Subtask> subtasks = new HashMap<>();
+    private Duration duration;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public void setSubtaskIds(List<Integer> newSubtaskIds) {
         this.subtaskIds = new ArrayList<>(newSubtaskIds);
@@ -34,6 +39,37 @@ public class Epic extends Task {
         return Status.DONE;
     }
 
+    public void updateFields() {
+        List<Subtask> subtaskList = new ArrayList<>();
+        for (Integer subtaskId : getSubtaskIds()) {
+            Subtask subtask = subtasks.get(subtaskId);
+            if (subtask != null) {
+                subtaskList.add(subtask);
+            }
+        }
+
+        if (subtaskList.isEmpty()) {
+            this.duration = Duration.ZERO;
+            this.startTime = null;
+            this.endTime = null;
+        } else {
+            this.duration = Duration.ofMillis(subtaskList.stream()
+                    .mapToLong(Task::getDuration)
+                    .sum());
+
+            this.startTime = subtaskList.stream()
+                    .map(Task::getStartTime)
+                    .filter(Objects::nonNull)
+                    .min(LocalDateTime::compareTo)
+                    .orElse(null);
+
+            this.endTime = subtaskList.stream()
+                    .map(Task::getEndTime)
+                    .filter(Objects::nonNull)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(null);
+        }
+    }
 
     @Override
     public int hashCode() {
@@ -57,7 +93,23 @@ public class Epic extends Task {
             if (!Objects.equals(subtaskIds.get(i), other.subtaskIds.get(i))) {
                 return false;
             }
-    }
+        }
         return true;
-}
+    }
+
+    @Override
+    public long getDuration() {
+        return duration.toMinutes();
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
 }
