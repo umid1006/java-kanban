@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class Subtask extends Task {
 
     private final int epicId;
-    private Duration duration;
+    private long duration;
     private LocalDateTime startTime;
 
 
@@ -19,11 +19,11 @@ public class Subtask extends Task {
     }
 
     public long getDuration() {
-        return duration.toMinutes();
+        return duration;
     }
 
     public void setDuration(Duration duration) {
-        this.duration = duration;
+        this.duration = duration.toMinutes();
     }
 
     public LocalDateTime getStartTime() {
@@ -35,8 +35,8 @@ public class Subtask extends Task {
     }
 
     public LocalDateTime getEndTime() {
-        if (startTime != null && duration != null) {
-            return startTime.plus(duration);
+        if (startTime != null && duration != 0) {
+            return startTime.plus(Duration.ofMinutes(duration));
         } else {
             return null;
             // Or handle the case where startTime or duration is null
@@ -50,6 +50,7 @@ public class Subtask extends Task {
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status='" + "NEW" + '\'' +
+                ", duration=" + duration +
                 ", epicId=" + epicId +
                 '}';
     }

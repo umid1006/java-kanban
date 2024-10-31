@@ -118,6 +118,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 ));
             }
             for (Epic epic : getAllEpics()) {
+                epic.updateFields();
                 writer.write(String.format("%d,%s,%s,%s,%s,%s,%d,%d\n",
                         epic.getId(), // Added epic ID
                         "Epic", // Type of the task
@@ -163,31 +164,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     String name = parts[2];
                     Status status = Status.valueOf(parts[3]); // Parse the status correctly
                     String description = parts[4];
+                    long duration = Long.parseLong(parts[6]); // Parse duration
+                    LocalDateTime startTime = !parts[7].equals("0")
+                            ? LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)
+                            : null; // Parse start time
 
                     // Determine the task type and create the corresponding object
                     switch (type) {
                         case "Task":
                             Task task = new Task(name, description, status);
-                            task.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
-                            if (!parts[7].equals("0")) {
-                                task.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
-                            }
+                            task.setId(id); // Set the ID
+                            task.setDuration(Duration.ofMinutes(duration).toMinutes());
+                            task.setStartTime(startTime);
                             manager.addNewTask(task);
                             break;
                         case "Subtask":
-                            Subtask subtask = new Subtask(name, description, status, id); // Assuming you have a Subtask constructor that takes these arguments
-                            subtask.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
-                            if (!parts[7].equals("0")) {
-                                subtask.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
-                            }
+                            int epicId = Integer.parseInt(parts[5]); // Get epicId for subtasks
+                            Subtask subtask = new Subtask(name, description, status, epicId);
+                            subtask.setId(id); // Set the ID
+                            subtask.setDuration(Duration.ofMinutes(duration));
+                            subtask.setStartTime(startTime);
                             manager.addNewSubtask(subtask);
                             break;
                         case "Epic":
                             Epic epic = new Epic(name, description, status);
-                            epic.setDuration(Duration.ofMinutes(Long.parseLong(parts[6]))); // Parse duration
-                            if (!parts[7].equals("0")) {
-                                epic.setStartTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts[7])), ZoneOffset.UTC)); // Parse start time
-                            }
+                            epic.setId(id); // Set the ID
+                            epic.setDuration(Duration.ofMinutes(duration).toMinutes());
+                            epic.setStartTime(startTime);
                             manager.addNewEpic(epic);
                             break;
                         default:

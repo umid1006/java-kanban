@@ -2,7 +2,6 @@ package model;
 
 import user.User;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -54,8 +53,8 @@ public class Task {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration.toMinutes();
+    public void setDuration(long duration) {
+        this.duration = duration;
     }
 
     public LocalDateTime getStartTime() {

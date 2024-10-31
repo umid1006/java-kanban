@@ -1,14 +1,13 @@
 package model;
 
-import java.util.*;
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.*;
 
 public class Epic extends Task {
 
     private ArrayList<Integer> subtaskIds = new ArrayList<>();
     public Map<Integer, Subtask> subtasks = new HashMap<>();
-    private Duration duration;
+    private Long duration;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
@@ -28,14 +27,12 @@ public class Epic extends Task {
         if (subtasks.isEmpty()) {
             return Status.NEW;
         }
-
         for (Map.Entry<Integer, Subtask> entry : subtasks.entrySet()) {
             Subtask subtask = entry.getValue();
             if (!Objects.equals(subtask.getStatus(), Status.DONE)) {
                 return Status.IN_PROGRESS;
             }
         }
-
         return Status.DONE;
     }
 
@@ -47,15 +44,14 @@ public class Epic extends Task {
                 subtaskList.add(subtask);
             }
         }
-
         if (subtaskList.isEmpty()) {
-            this.duration = Duration.ZERO;
+            this.duration = 0L; // Assign 0 as a Long
             this.startTime = null;
             this.endTime = null;
         } else {
-            this.duration = Duration.ofMillis(subtaskList.stream()
+            this.duration = subtaskList.stream()
                     .mapToLong(Task::getDuration)
-                    .sum());
+                    .sum(); // Assign the sum of durations as a Long
 
             this.startTime = subtaskList.stream()
                     .map(Task::getStartTime)
@@ -99,7 +95,7 @@ public class Epic extends Task {
 
     @Override
     public long getDuration() {
-        return duration.toMinutes();
+        return duration;
     }
 
     @Override
