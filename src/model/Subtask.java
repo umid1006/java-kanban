@@ -1,8 +1,12 @@
 package model;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Subtask extends Task {
 
     private final int epicId;
+    private long duration;
+    private LocalDateTime startTime;
 
 
     public Subtask(String name, String description, Status status, int epicId) { // Corrected argument name (optional)
@@ -14,8 +18,29 @@ public class Subtask extends Task {
         return epicId;
     }
 
-    public Status getStatus() {
-        return status;
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration.toMinutes();
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime != null && duration != 0) {
+            return startTime.plus(Duration.ofMinutes(duration));
+        } else {
+            return null;
+            // Or handle the case where startTime or duration is null
+        }
     }
 
     @Override
@@ -25,6 +50,7 @@ public class Subtask extends Task {
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status='" + "NEW" + '\'' +
+                ", duration=" + duration +
                 ", epicId=" + epicId +
                 '}';
     }
