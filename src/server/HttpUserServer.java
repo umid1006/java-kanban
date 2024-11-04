@@ -13,11 +13,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpUserServer {
     private static final int PORT = 8080;
-    private HttpServer server;
-    private Gson gson;
+    private final HttpServer server;
+    private final Gson gson;
 
     private TaskManager taskManager;
-    private UserManager userManager;
+    private final UserManager userManager;
 
     public HttpUserServer() throws IOException {
         this(Managers.getUserDefault());
@@ -132,5 +132,10 @@ public class HttpUserServer {
         h.getResponseHeaders().add("Context-Type", "application/json;charset=utf-8");
         h.sendResponseHeaders(200, resp.length);
         h.getResponseBody().write(resp);
+    }
+
+    public static void main(String[] args) throws IOException {
+        final HttpUserServer server = new HttpUserServer();
+        server.start();
     }
 }

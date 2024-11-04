@@ -142,13 +142,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         subtask.getStartTime() != null ? subtask.getStartTime().toEpochSecond(ZoneOffset.UTC) : 0 // Start time in epoch seconds
                 ));
             }
-
         } catch (IOException e) {
             System.err.println("Ошибка сохранения в файл: " + e.getMessage());
         }
-    }
+    }    // Статический метод для загрузки данных из файла
 
-    // Статический метод для загрузки данных из файла
     public static FileBackedTaskManager loadFromFile(Path file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         try {
@@ -207,8 +205,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public List<Task> getPrioritizedTasks() {
         // Create a TreeSet with a comparator that sorts tasks by startTime
         TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
-                Comparator.nullsLast(Comparator.naturalOrder())));
-        // nulls last
+                Comparator.nullsLast(Comparator.naturalOrder()))); // nulls last
 
         // Add all tasks and subtasks to the TreeSet
         prioritizedTasks.addAll(getAllTasks());
@@ -216,5 +213,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         return new ArrayList<>(prioritizedTasks); // Return as a List
     }
-
 }
