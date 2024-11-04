@@ -1,3 +1,4 @@
+import exception.NotFoundException;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
@@ -10,10 +11,9 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NotFoundException {
 
         TaskManager manager = Managers.getDefault();
-
 
         // Create tasks (provide name, description, and status as arguments)
         Task task1 = new Task("model.Task #1", "Task1 description", Status.NEW);
@@ -45,9 +45,9 @@ public class Main {
         // Print all tasks
         printTasks(manager.getAllTasks(), (InMemoryTaskManager) manager);
 
-        List<TaskManager> history = manager.getHistory();
-        for (TaskManager item : history) {
-        System.out.println(item);
+        List<Task> history = manager.getHistory();
+        for (Task item : history) {
+            System.out.println(item);
         }
 
         // Update task status
