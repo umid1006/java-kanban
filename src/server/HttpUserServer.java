@@ -36,11 +36,19 @@ public class HttpUserServer {
         server = HttpServer.create(new InetSocketAddress("LocalHost", PORT), 0);
 
         server.createContext("/api/v1/users", this::handleUsers);
-        server.createContext("/tasks", (httpExchange) -> {new TaskHandler(taskManager, gson).handle(httpExchange); }); // Add context for /tasks
-        server.createContext("/subtasks", (httpExchange) -> {new SubtaskHandler(taskManager, gson).handle(httpExchange); });
-        server.createContext("/epics", (httpExchange) -> {new EpicHandler(taskManager, gson).handle(httpExchange); });
-        server.createContext("/prioritized", (httpExchange) -> {new PrioritizedHandler(taskManager, gson).handle(httpExchange); });
-}
+        server.createContext("/tasks", (httpExchange) -> {
+            new TaskHandler(taskManager, gson).handle(httpExchange);
+        }); // Add context for /tasks
+        server.createContext("/subtasks", (httpExchange) -> {
+            new SubtaskHandler(taskManager, gson).handle(httpExchange);
+        });
+        server.createContext("/epics", (httpExchange) -> {
+            new EpicHandler(taskManager, gson).handle(httpExchange);
+        });
+        server.createContext("/prioritized", (httpExchange) -> {
+            new PrioritizedHandler(taskManager, gson).handle(httpExchange);
+        });
+    }
 
     private void handleUsers(HttpExchange httpExchange) {
 
