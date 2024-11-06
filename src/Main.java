@@ -41,7 +41,6 @@ public class Main {
         manager.addNewSubtask(subtask1);
         manager.addNewSubtask(subtask2);
         manager.addNewSubtask(subtask3);
-
         // Print all tasks
         printTasks(manager.getAllTasks(), (InMemoryTaskManager) manager);
 
@@ -49,7 +48,6 @@ public class Main {
         for (Task item : history) {
             System.out.println(item);
         }
-
         // Update task status
         Task retrievedTask = manager.getTaskById(task2.getId());
         if (retrievedTask != null) {
@@ -58,7 +56,6 @@ public class Main {
         } else {
             System.out.println("Subtask with ID " + task2.getId() + " not found.");
         }
-
         System.out.println("\nTasks after status update:");
         printTasks(manager.getAllTasks(), (InMemoryTaskManager) manager);
     }

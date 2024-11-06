@@ -3,7 +3,13 @@ package server;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import manager.*;
+import manager.Managers;
+import manager.TaskManager;
+import manager.UserManager;
+import server.handler.EpicHandler;
+import server.handler.PrioritizedHandler;
+import server.handler.SubtaskHandler;
+import server.handler.TaskHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -28,8 +34,13 @@ public class HttpUserServer {
         this.taskManager = userManager.getTaskmanager();
         gson = Managers.getGson();
         server = HttpServer.create(new InetSocketAddress("LocalHost", PORT), 0);
+
         server.createContext("/api/v1/users", this::handleUsers);
-    }
+        server.createContext("/tasks", (httpExchange) -> {new TaskHandler(taskManager, gson).handle(httpExchange); }); // Add context for /tasks
+        server.createContext("/subtasks", (httpExchange) -> {new SubtaskHandler(taskManager, gson).handle(httpExchange); });
+        server.createContext("/epics", (httpExchange) -> {new EpicHandler(taskManager, gson).handle(httpExchange); });
+        server.createContext("/prioritized", (httpExchange) -> {new PrioritizedHandler(taskManager, gson).handle(httpExchange); });
+}
 
     private void handleUsers(HttpExchange httpExchange) {
 
@@ -44,7 +55,6 @@ public class HttpUserServer {
                         sendText(httpExchange, responce);
                         return;
                     }
-
                     if (Pattern.matches("^/api/v1/users/\\d+$", path)) {
                         String pathId = path.replaceFirst("^/api/v1/users/", "");
                         int id = parsePathId(pathId);
@@ -55,8 +65,8 @@ public class HttpUserServer {
                         } else {
                             System.out.println("Получен некорректный id = " + pathId);
                             httpExchange.sendResponseHeaders(405, 0);
-                            break;
                         }
+                        break;
                     }
 
                     if (Pattern.matches("^/api/v1/users/\\d+/tasks$", path)) {
@@ -66,12 +76,11 @@ public class HttpUserServer {
                         if (id != -1) {
                             String response = gson.toJson(userManager.getUserTask(id));
                             sendText(httpExchange, response);
-                            break;
                         } else {
                             System.out.println("Получен некорректный id = " + pathId);
                             httpExchange.sendResponseHeaders(405, 0);
-                            break;
                         }
+                        break;
                     }
                     break;
                 }

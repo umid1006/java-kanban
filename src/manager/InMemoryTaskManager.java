@@ -6,10 +6,7 @@ import model.Subtask;
 import model.Task;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -19,6 +16,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
     private final HistoryManager historyManager;
+
+    private final Comparator<Task> comparator = Comparator.comparing(Task::getStartTime,
+            Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId);
+    private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     public InMemoryTaskManager() {
         this.historyManager = Managers.getHistoryDefault();
@@ -218,8 +219,18 @@ public class InMemoryTaskManager implements TaskManager {
                         otherTask.getStartTime(), otherTask.getEndTime()));
     }
 
+    public void addPrioritizedTask(Task task) {
+        int id = task.getId();
+        this.prioritizedTasks.removeIf(prioritizeTask -> prioritizeTask.getId() == id);
+        this.prioritizedTasks.add(task);
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
     private boolean isIntervalOverlapping(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
         return start1.isBefore(end2) && start2.isBefore(end1);
-
     }
 }

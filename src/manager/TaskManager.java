@@ -31,7 +31,7 @@ public interface TaskManager {
 
     void deleteAllEpics();
 
-    int addNewTask(model.Task task);
+    int addNewTask(Task task);
 
     int addNewEpic(Epic epic);
 
@@ -50,5 +50,9 @@ public interface TaskManager {
     ArrayList<Subtask> getEpicSubtasks(int epicId);
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    void addPrioritizedTask(Task task);
 
 }
