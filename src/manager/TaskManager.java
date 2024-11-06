@@ -55,4 +55,6 @@ public interface TaskManager {
 
     void addPrioritizedTask(Task task);
 
+    boolean isTaskIntersectsWithOthers(Task task);
+
 }

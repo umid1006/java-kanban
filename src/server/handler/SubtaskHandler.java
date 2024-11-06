@@ -73,17 +73,31 @@ public class SubtaskHandler extends BaseHttpHandler {
         return response;
     }
 
-    private String postMethod(HttpExchange httpExchange) {
+    private String postMethod(HttpExchange httpExchange) throws Exception {
         String path = httpExchange.getRequestURI().getPath();
         String response = "201";
-        try {
-            if (path.matches("/subtasks/\\d+")) {
-                String body = readText(httpExchange);
-                Subtask subtask = gson.fromJson(body, Subtask.class);
-                taskManager.updateSubtask(subtask);
+        if (path.equals("/subtasks")) {
+            // POST /subtasks - создать новую подзадачу
+            String body = readText(httpExchange);
+            Subtask subtask = gson.fromJson(body, Subtask.class);
+
+            // Проверка на пересечение с другими задачами
+            if (subtask.getStartTime() != null && taskManager.isTaskIntersectsWithOthers(subtask)) {
+                return "406"; // Подзадача пересекается с другими
             }
-        } catch (Exception exception) {
-            response = "400";
+            taskManager.addNewSubtask(subtask);
+        } else if (path.matches("/subtasks/\\d+")) {
+            // POST /subtasks/{id} - обновить подзадачу
+            String body = readText(httpExchange);
+            Subtask subtask = gson.fromJson(body, Subtask.class);
+            // Проверка на пересечение с другими задачами
+            if (subtask.getStartTime() != null && taskManager.isTaskIntersectsWithOthers(subtask)) {
+                return "406"; // Подзадача пересекается с другими
+            }
+
+            taskManager.updateSubtask(subtask);
+        } else {
+            response = "400"; // Bad Request - неверный путь
         }
         return response;
     }

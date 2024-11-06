@@ -77,10 +77,16 @@ public class TaskHandler extends BaseHttpHandler {
         if (path.equals("/tasks")) {
             String body = readText(httpExchange);
             Task task = gson.fromJson(body, Task.class);
+            if (task.getStartTime() != null && taskManager.isTaskIntersectsWithOthers(task)) {
+                return "406"; // Задача пересекается с другими
+            }
             taskManager.addNewTask(task);
         } else if (path.matches("/tasks/\\d+")) {
             String body = readText(httpExchange);
             Task task = gson.fromJson(body, Task.class);
+            if (task.getStartTime() != null && taskManager.isTaskIntersectsWithOthers(task)) {
+                return "406"; // Задача пересекается с другими
+            }
             taskManager.updateTask(task);
         }
         return response;

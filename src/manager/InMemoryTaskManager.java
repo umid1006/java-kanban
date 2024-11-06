@@ -211,7 +211,7 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    private boolean isTaskIntersectsWithOthers(Task task) {
+    public boolean isTaskIntersectsWithOthers(Task task) {
         return getAllTasks().stream()
                 .filter(otherTask -> otherTask.getId() != task.getId() && otherTask.getStartTime() != null)
                 .anyMatch(otherTask -> isIntervalOverlapping(

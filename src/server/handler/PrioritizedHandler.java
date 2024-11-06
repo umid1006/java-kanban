@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import model.Task;
 
+import java.io.IOException;
 import java.util.List;
 
 public class PrioritizedHandler extends BaseHttpHandler {
@@ -14,7 +15,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) {  // No need to throw IOException
+    public void handle(HttpExchange httpExchange) throws IOException {  // No need to throw IOException
         try {
             String method = httpExchange.getRequestMethod();
             String path = httpExchange.getRequestURI().getPath();
@@ -29,6 +30,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
             }
         } catch (Exception e) {
             // ... error handling (log the exception) ...
+            httpExchange.sendResponseHeaders(500, -1);
         } finally {
             httpExchange.close();
         }
