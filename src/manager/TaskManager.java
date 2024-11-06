@@ -1,7 +1,9 @@
 package manager;
 
+import exception.NotFoundException;
 import model.Epic;
 import model.Subtask;
+import model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,11 @@ public interface TaskManager {
 
     List<Epic> getAllEpics();
 
-    model.Task getTaskById(int id);
+    Task getTaskById(int id) throws NotFoundException;
 
-    Subtask getSubTaskById(int id);
+    Subtask getSubTaskById(int id) throws NotFoundException; // Добавляем throws NotFoundException
 
-    Epic getEpicById(int id);
+    Epic getEpicById(int id) throws NotFoundException; // Добавляем throws NotFoundException
 
     Epic getEpicBySubtaskId(int id);
 
@@ -29,7 +31,7 @@ public interface TaskManager {
 
     void deleteAllEpics();
 
-    int addNewTask(model.Task task);
+    int addNewTask(Task task);
 
     int addNewEpic(Epic epic);
 
@@ -47,6 +49,10 @@ public interface TaskManager {
 
     ArrayList<Subtask> getEpicSubtasks(int epicId);
 
-    List<TaskManager> getHistory();
+    List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    void addPrioritizedTask(Task task);
 
 }
