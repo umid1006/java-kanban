@@ -23,8 +23,7 @@ public abstract class BaseHttpHandler {
         h.getResponseHeaders().add("Content-Type", "application/json");
 
         h.sendResponseHeaders(200, resp.length);
-        try (OutputStream os = h.getResponseBody())
-        {
+        try (OutputStream os = h.getResponseBody()) {
             os.write(resp);
         }
     }
